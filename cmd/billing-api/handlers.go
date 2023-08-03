@@ -10,5 +10,5 @@ type handlers struct {
 }
 
 func (h handlers) healthcheck(c *gin.Context) {
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"message": "OK"})
 }
