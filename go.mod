@@ -3,7 +3,9 @@ module codeinuit/test-billing-api
 go 1.20
 
 require (
+	github.com/codeinuit/test-billing-api v0.0.0-20230804074710-42cf04709d56
 	github.com/gin-gonic/gin v1.9.1
+	github.com/lib/pq v1.10.9
 	github.com/sirupsen/logrus v1.9.3
 )
 
