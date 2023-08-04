@@ -1,8 +1,9 @@
 package main
 
 import (
-	logger "codeinuit/test-billing-api/pkg/log"
 	"net/http"
+
+	logger "github.com/codeinuit/test-billing-api/pkg/log"
 
 	"github.com/gin-gonic/gin"
 )

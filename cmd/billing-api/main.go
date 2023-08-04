@@ -1,11 +1,12 @@
 package main
 
 import (
-	logger "codeinuit/test-billing-api/pkg/log"
-	"codeinuit/test-billing-api/pkg/log/logrus"
 	"database/sql"
 	"fmt"
 	"os"
+
+	logger "github.com/codeinuit/test-billing-api/pkg/log"
+	"github.com/codeinuit/test-billing-api/pkg/log/logrus"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
