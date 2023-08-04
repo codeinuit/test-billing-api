@@ -4,9 +4,17 @@ services:
     depends_on:
       - db
     build: ./
-    restart: always
+    environment:
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=jump
+      - POSTGRES_PASS=password
+      - POSTGRES_DB=postgres
     ports:
       - '8080:8080'
+    links:
+      - "db:database"
   db:
     build: ./database
-    restart: always
+    ports:
+      - "5432:5432"
