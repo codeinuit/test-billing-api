@@ -1,9 +1,10 @@
 package main
 
 import (
-	logger "codeinuit/test-billing-api/pkg/log"
 	"database/sql"
 	"fmt"
+
+	logger "github.com/codeinuit/test-billing-api/pkg/log"
 )
 
 type Database struct {
