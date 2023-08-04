@@ -91,11 +91,10 @@ func main() {
 	api := BillingAPI{db: db, engine: e}
 	h := &handlers{log: l, db: &Database{log: l, conn: db}}
 
-	// route declaration
 	e.GET("/health", h.healthcheck)
 	e.GET("/users", h.getUsers)
 	e.POST("/invoice", h.postInvoice)
 	e.POST("/transaction", h.postTransaction)
 
-	api.Run()
+	_ = api.Run()
 }

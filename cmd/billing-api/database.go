@@ -38,6 +38,7 @@ const (
 // Users
 //
 
+// getUserByUserID returns a user related to its ID
 func (db Database) getUserByUserID(userID uint) (user User, err error) {
 	query := fmt.Sprintf("SELECT id, first_name, last_name, balance FROM users WHERE id = %d;", userID)
 	row := db.conn.QueryRow(query)
@@ -57,7 +58,12 @@ func (db Database) getUsers() (users []User, err error) {
 	for rows.Next() {
 		var user User
 
-		rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.Balance)
+		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.Balance)
+		if err != nil {
+			db.log.Warn("error occurred while reading user row")
+			continue
+		}
+
 		users = append(users, user)
 	}
 
@@ -71,6 +77,7 @@ const (
 	OperationIncrement Operation = "+"
 )
 
+// updateUserBalanceByID update the user’s balance from database depending of the operation
 func (db Database) updateUserBalanceByID(ID uint, amount float64, op Operation) (err error) {
 	query := fmt.Sprintf("UPDATE users SET balance = balance %s $1 WHERE id = $2;", op)
 	_, err = db.conn.Exec(query, amount, ID)
@@ -81,6 +88,7 @@ func (db Database) updateUserBalanceByID(ID uint, amount float64, op Operation) 
 // Invoices
 //
 
+// getInvoiceByID returns a invoice from database
 func (db Database) getInvoiceByID(ID uint) (invoice Invoice, err error) {
 	query := fmt.Sprintf("SELECT id, user_id, label, amount, status FROM invoices WHERE id = %d;", ID)
 	row := db.conn.QueryRow(query)
@@ -90,12 +98,14 @@ func (db Database) getInvoiceByID(ID uint) (invoice Invoice, err error) {
 	return invoice, err
 }
 
+// insertNewInvoice inserts a new invoice entry in database
 func (db Database) insertNewInvoice(i Invoice) (err error) {
 	query := "INSERT INTO invoices (user_id, amount, label) VALUES ($1, $2, $3);"
 	_, err = db.conn.Exec(query, i.UserID, i.Amount, i.Label)
 	return err
 }
 
+// updateInvoiceStatusByID updates the invoice’s status from database
 func (db Database) updateInvoiceStatusByID(ID uint, status InvoiceStatus) (err error) {
 	query := "UPDATE invoices SET status = $1 WHERE id = $2;"
 	_, err = db.conn.Exec(query, status, ID)

@@ -51,7 +51,6 @@ func (h handlers) postInvoice(c *gin.Context) {
 		return
 	}
 
-	// Check if user exist ?
 	_, err := h.db.getUserByUserID(invoice.UserID)
 	if err != nil {
 		h.log.Warn("could not insert invoice : ", err.Error())
@@ -84,7 +83,7 @@ func (h handlers) postTransaction(c *gin.Context) {
 	}
 
 	if invoice.Status == Paid {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invoice is already paid"})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "invoice is already paid"})
 		return
 	}
 
@@ -104,8 +103,16 @@ func (h handlers) postTransaction(c *gin.Context) {
 		return
 	}
 
-	// Update invoice status from "pending" to "paid"
-	h.db.updateUserBalanceByID(invoice.UserID, invoice.Amount, OperationDecrement)
-	h.db.updateInvoiceStatusByID(invoice.ID, Paid)
+	err = h.db.updateUserBalanceByID(invoice.UserID, invoice.Amount, OperationDecrement)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not update user balance"})
+		return
+	}
+	err = h.db.updateInvoiceStatusByID(invoice.ID, Paid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not update invoice status"})
+		return
+	}
+
 	c.JSON(http.StatusNoContent, gin.H{"status": "OK"})
 }
